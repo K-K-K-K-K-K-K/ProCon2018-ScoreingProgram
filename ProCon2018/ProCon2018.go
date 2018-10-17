@@ -46,13 +46,9 @@ func GetJSONString(status Status, indent bool) (string, error) {
 	if err != nil {
 		return string(statusBytes), err
 	}
-	if !indent {
-		return string(statusBytes), nil
-	} else {
-		indentedStatusBytes := new(bytes.Buffer)
-		json.Indent(indentedStatusBytes, statusBytes, "", "    ")
-		return indentedStatusBytes.String(), nil
-	}
+	indentedStatusBytes := new(bytes.Buffer)
+	json.Indent(indentedStatusBytes, statusBytes, "", "    ")
+	return indentedStatusBytes.String(), nil
 }
 
 type Data struct {
@@ -67,7 +63,11 @@ type Response struct {
 	Error		string	`json:"error"`
 }
 
-func GetResponse(status Status) (Response, error) {
+func BuildResponse(response string) (Response, error) {
+	return Response{}, nil
+}
+
+func POSTRequest(status Status) (Response, error) {
 	// JSON化
 	statusBytes, err := GetJSONBytes(status)
 	if err != nil {

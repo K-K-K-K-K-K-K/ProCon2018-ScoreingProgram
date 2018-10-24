@@ -50,6 +50,37 @@ func GenerateJSONString(status Status) (string, error) {
 	return indStBs.String(), nil
 }
 
+func SendRequest(stBs []byte) ([]byte, error) {
+	req, err := http.NewRequest(
+		"POST",
+		Endpoint,
+		bytes.NewBuffer([]byte(stBs)),
+	)
+	if err != nil {
+		fmt.Println("POST要求の作成に失敗")
+		return nil, err
+	}
+
+	req.Header.Set("content-type", "application/json")
+	req.Header.Set("x-api-key", "***")
+	
+	client := &http.Client{}
+	res, err := client.Do(req)
+	if err != nil {
+		fmt.Println("POST要求の実行に失敗")
+		return nil, err
+	}
+
+	resBs, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		fmt.Println("応答解析に失敗")
+		return nil, err
+	}
+
+	fmt.Println(string(resBs)) // 験
+	return resBs, nil
+}
+
 type Data struct {
 	TilePoint		int		`json:"tile_point"`
 	TerritoryPoint	int		`json:"territory_point"`
@@ -63,38 +94,12 @@ type Result struct {
 }
 
 func BuildResult(resBs []byte) (Result, error) {
-	return Result{}, nil
-}
-
-func SendRequest(stBs []byte) (Result, error) {
-	req, err := http.NewRequest(
-		"POST",
-		Endpoint,
-		bytes.NewBuffer([]byte(stBs)),
-	)
-	if err != nil {
-		fmt.Println("POST要求の作成に失敗")
-		return Result{}, err
+	var result Result
+	if err := json.Unmarshal(resBs, result); err != nil {
+		return Result{}, errors.New("応答の構造体化に失敗")
 	}
 
-	req.Header.Set("content-type", "application/json")
-	req.Header.Set("x-api-key", "*****")
-	
-	client := &http.Client{}
-	res, err := client.Do(req)
-	if err != nil {
-		fmt.Println("POST実行に失敗")
-		return Result{}, err
-	}
-	
-	resBs, err := ioutil.ReadAll(res.Body)
-	if err != nil {
-		fmt.Println("応答解析に失敗")
-		return Result{}, err
-	}
-
-	fmt.Println(string(resBs)) // 験
-	return BuildResult(resBs)
+	return result, nil
 }
 
 func GetResult(status Status) (Result, error) {
@@ -103,8 +108,10 @@ func GetResult(status Status) (Result, error) {
 		return Result{}, err
 	}
 
-	return SendRequest(stBs)
-}
+	result, err := SendRequest(stBs)
+	if err != nil {
+		return Result{}, err
+	}
 
-// JSONの構造把握できてない -> 修正
-// レスポンス解析なされていないんですがそれは -> 諦める
+	return BuildResult(result)
+}

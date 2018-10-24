@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"./ProCon2018"
 )
 
@@ -51,10 +52,10 @@ func main() {
 		},
 	}
 
-	// おためしJSON変換
+	// JSON文字列化
 	str, err := ProCon2018.GenerateJSONString(status)
 	if err != nil {
-		fmt.Println("json化エラー")
+		log.Fatal(err)
 		return
 	}
 	fmt.Println(str) // おみせいたす

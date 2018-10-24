@@ -62,7 +62,7 @@ type Result struct {
 	Error		string	`json:"error"`
 }
 
-func BuildResponse(response string) (Result, error) {
+func BuildResult(resBs []byte) (Result, error) {
 	return Result{}, nil
 }
 
@@ -94,7 +94,7 @@ func SendRequest(stBs []byte) (Result, error) {
 	}
 
 	fmt.Println(string(resBs)) // 験
-	return BuildResult(reBs), err
+	return BuildResult(resBs)
 }
 
 func GetResult(status Status) (Result, error) {

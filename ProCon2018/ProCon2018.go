@@ -24,8 +24,7 @@ type Tile struct {
 }
 
 type Team struct {
-	TilesA	[]Tile	`json:"tiles"`
-	TilesB	[]Tile	`json:"tiles"`
+	Tiles	[]Tile	`json:"tiles"`
 }
     
 type Status struct {
@@ -67,7 +66,7 @@ func BuildResponse(response string) (Result, error) {
 	return Result{}, nil
 }
 
-func SendRequest(stBs []byte) (Result,error) {
+func SendRequest(stBs []byte) (Result, error) {
 	req, err := http.NewRequest(
 		"POST",
 		Endpoint,
@@ -79,7 +78,7 @@ func SendRequest(stBs []byte) (Result,error) {
 	}
 
 	req.Header.Set("content-type", "application/json")
-	req.Header.Set("x-api-key", "************")
+	req.Header.Set("x-api-key", "*****")
 	
 	client := &http.Client{}
 	res, err := client.Do(req)
@@ -95,7 +94,7 @@ func SendRequest(stBs []byte) (Result,error) {
 	}
 
 	fmt.Println(string(resBs)) // 験
-	return Result{}, err
+	return BuildResult(reBs), err
 }
 
 func GetResult(status Status) (Result, error) {

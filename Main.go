@@ -7,29 +7,48 @@ import (
 
 func main() {
 	/* JSON組立 ----------------------------------------------------------------------------------------------------- */
-	field := ProCon2018.Field {
-		Scores: []int{
-			1, 1, 2, 3, 5, 8, 13,
-			1,2,432,342,342432,432,23,
-		},
-		Height: 10,
-		Width: 20,
-	}
-
-	// tilesで指定するy, xは 0-index です。<-？
-	tile := ProCon2018.Tile {
-		Y: 32,
-		X: 64,
-	}
-	
-	team := ProCon2018.Team {
-		TilesA: []ProCon2018.Tile{tile, tile},
-		TilesB: []ProCon2018.Tile{tile, tile},
-	}
-
+	// tiles で指定する y, x は 0-index <-？
 	status := ProCon2018.Status {
-		Field: field,
-		Teams: []ProCon2018.Team{team, team},
+		Field: ProCon2018.Field {
+				Scores: []int{
+					-2, 1, 0, 1, 2, 0, 2, 1, 0, 1, -2,
+					1, 3, 2, -2, 0, 1, 0, -2, 2, 3, 1,
+					1, 3, 2, 1, 0, -2, 0, 1, 2, 3, 1,
+					2, 1, 1, 2, 2, 3, 2, 2, 1, 1, 2,
+					2, 1, 1, 2, 2, 3, 2, 2, 1, 1, 2,
+					1, 3, 2, 1, 0, -2, 0, 1, 2, 3, 1,
+					1, 3, 2, -2, 0, 1, 0, -2, 2, 3, 1,
+					-2, 1, 0, 1, 2, 0, 2, 1, 0, 1, -2,
+				},
+				Height: 8,
+				Width: 11,
+			},
+		Teams: []ProCon2018.Team{
+			ProCon2018.Team {
+				Tiles: []ProCon2018.Tile {
+					ProCon2018.Tile {
+						Y: 1,
+						X: 1,
+					},
+					ProCon2018.Tile {
+						Y: 6,
+						X: 9,
+					},
+				},
+			},
+			ProCon2018.Team {
+				Tiles: []ProCon2018.Tile {
+					ProCon2018.Tile {
+						Y: 1,
+						X: 9,
+					},
+					ProCon2018.Tile {
+						Y: 6,
+						X: 1,
+					},
+				},
+			},
+		},
 	}
 
 	// おためしJSON変換

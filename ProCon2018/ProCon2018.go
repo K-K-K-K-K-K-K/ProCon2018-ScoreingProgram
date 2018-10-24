@@ -33,22 +33,22 @@ type Status struct {
 	Teams	[]Team	`json:"teams"`
 }
 
-func GetJSONBytes(status Status) ([]byte, error) {
-	statusBytes, err := json.Marshal(status)
+func GenerateJSONBytes(status Status) ([]byte, error) {
+	stBs, err := json.Marshal(status)
 	if err != nil {
-		return statusBytes, errors.New("Status構造体のJSON文字列化に失敗")
+		return stBs, errors.New("Status構造体のバイト列化に失敗")
 	}
-	return statusBytes, nil
+	return stBs, nil
 }
 
-func GetJSONString(status Status, indent bool) (string, error) {
-	statusBytes, err := GetJSONBytes(status);
+func GenerateJSONString(status Status) (string, error) {
+	stBs, err := GenerateJSONBytes(status);
 	if err != nil {
-		return string(statusBytes), err
+		return string(stBs), err
 	}
-	indentedStatusBytes := new(bytes.Buffer)
-	json.Indent(indentedStatusBytes, statusBytes, "", "    ")
-	return indentedStatusBytes.String(), nil
+	indStBs := new(bytes.Buffer)
+	json.Indent(indStBs, stBs, "", "    ")
+	return indStBs.String(), nil
 }
 
 type Data struct {
@@ -57,33 +57,25 @@ type Data struct {
 	TileArea		[]int	`json:"tile_area"`
 }
 
-type Response struct {
+type Result struct {
 	Data		[]Data	`json:"data"`
 	ResponseID	string	`json:"response_id"`
 	Error		string	`json:"error"`
 }
 
-func BuildResponse(response string) (Response, error) {
-	return Response{}, nil
+func BuildResponse(response string) (Result, error) {
+	return Result{}, nil
 }
 
-func POSTRequest(status Status) (Response, error) {
-	// JSON化
-	statusBytes, err := GetJSONBytes(status)
-	if err != nil {
-		return Response{}, err
-	}
-
-
-	// POST実行
+func SendRequest(stBs []byte) (Result,error) {
 	req, err := http.NewRequest(
 		"POST",
 		Endpoint,
-		bytes.NewBuffer([]byte(statusBytes)),
+		bytes.NewBuffer([]byte(stBs)),
 	)
 	if err != nil {
 		fmt.Println("POST要求の作成に失敗")
-		return Response{}, err
+		return Result{}, err
 	}
 
 	req.Header.Set("content-type", "application/json")
@@ -93,22 +85,27 @@ func POSTRequest(status Status) (Response, error) {
 	res, err := client.Do(req)
 	if err != nil {
 		fmt.Println("POST実行に失敗")
-		return Response{}, err
+		return Result{}, err
 	}
 	
-	b, err := ioutil.ReadAll(res.Body)
+	resBs, err := ioutil.ReadAll(res.Body)
 	if err != nil {
 		fmt.Println("応答解析に失敗")
-		return Response{}, err
+		return Result{}, err
 	}
 
-	fmt.Println(string(b))
+	fmt.Println(string(resBs)) // 験
+	return Result{}, err
+}
 
+func GetResult(status Status) (Result, error) {
+	stBs, err := GenerateJSONBytes(status)
+	if err != nil {
+		return Result{}, err
+	}
 
-	// レスポンスをデコード
-	return Response{}, err
+	return SendRequest(stBs)
 }
 
 // JSONの構造把握できてない -> 修正
-// GetResponseが適当すぎる -> ほならね
 // レスポンス解析なされていないんですがそれは -> 諦める

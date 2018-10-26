@@ -82,9 +82,9 @@ func SendRequest(stBs []byte) ([]byte, error) {
 }
 
 type Data struct {
-	TilePoint		int		`json:"tile_point"`
+	TilePoint			int		`json:"tile_point"`
 	TerritoryPoint	int		`json:"territory_point"`
-	TileArea		[]int	`json:"tile_area"`
+	TileArea			[]int	`json:"tile_area"`
 }
 
 type Result struct {
